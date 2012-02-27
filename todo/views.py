@@ -160,7 +160,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0,view_category=0,
     # Get list of items with this list ID, or filter on items assigned to me, or recently added/completed
     if list_slug == "mine":
         task_list = Item.objects.filter(assigned_to=request.user, completed=0)
-        completed_list = Item.objects.filter(assigned_to=request.user, completed=1)
+        completed_list = Item.objects.filter(assigned_to=request.user, completed=1).order_by('-completed_date')
         
     elif list_slug == "recent-add":
         # We'll assume this only includes uncompleted items to avoid confusion.
@@ -176,7 +176,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0,view_category=0,
 
     else:
         task_list = Item.objects.filter(list=list.id, completed=0)
-        completed_list = Item.objects.filter(list=list.id, completed=1)
+        completed_list = Item.objects.filter(list=list.id, completed=1).order_by('-completed_date')
         category_list = Item.objects.filter(list=list.id, completed=0, category=category_id)
 
     if request.POST.getlist('add_task') :
