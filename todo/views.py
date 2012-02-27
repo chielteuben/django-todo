@@ -91,7 +91,7 @@ def del_list(request,list_id,list_slug):
 
 
 @login_required
-def view_list(request,list_id=0,list_slug=None,view_completed=0):
+def view_list(request,list_id=0,list_slug=None,view_completed=0,view_category=0,category_id=0,category_slug=None):
     
     """
     Display and manage items in a task list
@@ -171,13 +171,13 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0):
     elif list_slug == "recent-complete":
         # Only show items in lists that are in groups that the current user is also in.
         task_list = Item.objects.filter(list__group__in=request.user.groups.all(),completed=1).order_by('-completed_date')[:50]
-        # completed_list = Item.objects.filter(assigned_to=request.user, completed=1)             
+        # completed_list = Item.objects.filter(assigned_to=request.user, completed=1)       
 
 
     else:
         task_list = Item.objects.filter(list=list.id, completed=0)
         completed_list = Item.objects.filter(list=list.id, completed=1)
-
+        category_list = Item.objects.filter(list=list.id, completed=0, category=category_id)
 
     if request.POST.getlist('add_task') :
         form = AddItemForm(list, request.POST,initial={
@@ -388,7 +388,7 @@ def search(request):
     Search for tasks
     """
 
-    if request.GET:    
+    if request.GET:
 
         query_string = ''
         found_items = None
@@ -405,7 +405,7 @@ def search(request):
             # In that case we still need found_items in a queryset so it can be "excluded" below.
             found_items = Item.objects.all()    
         
-        if request.GET['inc_complete'] == "0" :
+        if request.GET.get('inc_complete', False):
             found_items = found_items.exclude(completed=True)
             
     else :
@@ -416,9 +416,3 @@ def search(request):
                           { 'query_string': query_string, 'found_items': found_items },
                           context_instance=RequestContext(request))
 
-
-
-
-
-
-    

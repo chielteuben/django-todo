@@ -33,9 +33,14 @@ $(document).ready(function() {
 
 <form action="" method="POST">
 {% csrf_token %}	
-<p id="slideToggle" ><strong>&rarr; Click to edit details &larr;</strong></p>
 
-<p><strong>In list:</strong> <a href="{% url todo-incomplete_tasks task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a><br />
+<p>
+{% if task.category %}
+<strong>In category:</strong> <a href="{% url todo-categorized_tasks list_id=task.list.id list_slug=task.list.slug category_id=task.category.id category_slug=task.category.slug %}" class="showlink">{{ task.category }}</a><br />
+{% else %}
+<strong>In category:</strong> Uncategorized<br />
+{% endif %}
+<strong>In list:</strong> <a href="{% url todo-incomplete_tasks task.list.id task.list.slug %}" class="showlink">{{ task.list }}</a><br />
 <strong>Assigned to:</strong> {{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}<br />
 <strong>Created by:</strong> {{ task.created_by.first_name }} {{ task.created_by.last_name }}<br />
 <strong>Due date:</strong>  {{ task.due_date }}<br />
@@ -47,12 +52,18 @@ $(document).ready(function() {
 <div class="task_note"><strong>Note:</strong> {{ task.note|safe|urlize|linebreaks }}</div>    
 {% endif %}
 
+<p id="slideToggle" ><strong>&rarr; Edit details &larr;</strong></p>
+
 <div id="TaskEdit">
 <h3>Edit Task</h3>
 
 <table>
     {{ form.management_form }}
     {{ form.id }}
+<tr>
+    <td>Category:</td>
+    <td>{{ form.category }}  </td>
+</tr>
 <tr>    
     <td>Title:</td>
     <td>{{ form.title }}  </td>
@@ -106,8 +117,9 @@ $(document).ready(function() {
 
 <div class="task_comments">
 {% for comment in comment_list %}
-    <p><strong>{{ comment.author.first_name }} {{ comment.author.last_name }}, {{ comment.date|date:"F d Y P" }}</strong> </p>
+    <div class="task_comment"><strong>{{ comment.author.first_name }} {{ comment.author.last_name }}, {{ comment.date|date:"F d Y P" }}</strong><br>
     {{ comment.body|safe|urlize|linebreaks }}
+    </div>
 {% empty %}
 <p>No Comments</p>
 {% endfor %}

@@ -2,14 +2,14 @@ from django.db import models
 from django.forms.models import ModelForm
 from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import User,Group
+from django.contrib.auth.models import User, Group
 import string, datetime
 from django.template.defaultfilters import slugify
 
 
 class List(models.Model):
     name = models.CharField(max_length=60)
-    slug = models.SlugField(max_length=60,editable=False)
+    slug = models.SlugField(max_length=60, editable=False)
     # slug = models.SlugField(max_length=60)    
     group = models.ForeignKey(Group)
     
@@ -19,8 +19,6 @@ class List(models.Model):
 
         super(List, self).save(*args, **kwargs)
 
-    
-
     def __unicode__(self):
         return self.name
         
@@ -29,7 +27,7 @@ class List(models.Model):
     
     def incomplete_tasks(self):
         # Count all incomplete tasks on the current list instance
-        return Item.objects.filter(list=self,completed=0)
+        return Item.objects.filter(list=self, completed=0)
         
     class Meta:
         ordering = ["name"]        
@@ -37,21 +35,30 @@ class List(models.Model):
         
         # Prevents (at the database level) creation of two lists with the same name in the same group
         unique_together = ("group", "slug")
-        
-        
 
 
-        
+class Category(models.Model):
+    name = models.CharField(max_length=40)
+    slug = models.SlugField(max_length=40, editable=False)
+    enabled = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
 class Item(models.Model):
     title = models.CharField(max_length=140)
     list = models.ForeignKey(List)
+    category = models.ForeignKey(Category, blank=True, null=True)
     created_date = models.DateField(auto_now=True, auto_now_add=True)
-    due_date = models.DateField(blank=True,null=True,)
+    due_date = models.DateField(blank=True, null=True)
     completed = models.BooleanField()
-    completed_date = models.DateField(blank=True,null=True)
+    completed_date = models.DateField(blank=True, null=True)
     created_by = models.ForeignKey(User, related_name='created_by')
     assigned_to = models.ForeignKey(User, related_name='todo_assigned_to')
-    note = models.TextField(blank=True,null=True)
+    note = models.TextField(blank=True, null=True)
     priority = models.PositiveIntegerField(max_length=3)
     
     # Model method: Has due date for an instance of this object passed?
@@ -73,11 +80,11 @@ class Item(models.Model):
 
     class Meta:
         ordering = ["priority"]        
-        
+
 
 class Comment(models.Model):    
     """
-    Not using Django's built-in comments becase we want to be able to save 
+    Not using Django's built-in comments because we want to be able to save 
     a comment and change task details at the same time. Rolling our own since it's easy.
     """
     author = models.ForeignKey(User)
