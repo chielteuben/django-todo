@@ -2,6 +2,8 @@ django-todo is a pluggable multi-user, multi-group task management and
 assignment application for Django. It can serve as anything from a 
 personal to-do system to a complete, working ticketing system for organizations.
 
+IMPORTANT: this fork assumes you have added the jquery-ui css and ui.datepicker.js to your own base template!
+
 For documentation, see the django-todo wiki pages:
 
 Overview and screenshots
