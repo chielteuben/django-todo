@@ -122,6 +122,7 @@ def view_list(request,list_id=0,list_slug=None,view_completed=0,view_category=0,
             p = Item.objects.get(id=thisitem)
             p.completed = 1
             p.completed_date = datetime.datetime.now()
+            p.completed_by = request.user
             p.save()
             messages.success(request, "Item \"%s\" marked complete." % p.title)                                             
 
