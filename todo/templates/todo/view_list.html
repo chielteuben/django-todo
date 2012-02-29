@@ -109,7 +109,9 @@ $(document).ready(function() {
             <th>Created</th> 
             <th>Due on</th>                         
             <th>Owner</th> 
+            {% ifnotequal list_slug "mine" %}
             <th>Assigned</th>   
+            {% endifnotequal %}
             <th>Note</th>   
             <th>Comm</th>                            
  
@@ -132,15 +134,14 @@ $(document).ready(function() {
                     {% if task.overdue_status %}</span>{% endif %}	                
                     </td>
                     <td>{{ task.created_by }}</td> 
+                    {% ifnotequal list_slug "mine" %}
                     <td>{{ task.assigned_to }}</td>
+                    {% endifnotequal %}
                     <td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
-                    <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}
-                       
-                    </td>	            
+                    <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}</td>	            
                     {% ifequal list_slug "mine" %}
                     <td><a href="{% url todo-incomplete_tasks task.list.id task.list.slug %}">{{ task.list }}</a></td>   
                     {% endifequal %}
-                           
                     <td><input type="checkbox" name="del_task" value="{{ task.id }}" id="del_task_{{ task.id }}">   </td> 	            
                 </tr>
             {% endfor %}
@@ -161,7 +162,9 @@ $(document).ready(function() {
                     {% if task.overdue_status %}</span>{% endif %}	                
                     </td>
                     <td>{{ task.created_by }}</td> 
+                    {% ifnotequal list_slug "mine" %}
                     <td>{{ task.assigned_to }}</td>
+                    {% endifnotequal %}
                     <td style="text-align:center;">{% if task.note %}&asymp;{% endif %} </td>
                     <td style="text-align:center;">{% ifnotequal task.comment_set.all.count 0  %}{{ task.comment_set.all.count }}{% endifnotequal %}</td>	            
                     {% ifequal list_slug "mine" %}
