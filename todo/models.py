@@ -42,6 +42,12 @@ class Category(models.Model):
     slug = models.SlugField(max_length=40, editable=False)
     enabled = models.BooleanField(default=True)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        super(Category, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.name
 
